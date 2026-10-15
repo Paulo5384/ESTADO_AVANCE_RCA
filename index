@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Tablero RCA Experto</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{-webkit-text-size-adjust:100%}
+body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+</style>
+<style>
+:root{
+  --bg:#EEF1EF; --surface:#FFFFFF; --surface2:#F5F7F6; --ink:#14201D; --muted:#586869; --line:#D8DFDC;
+  --accent:#2B3A8C; --accent-ink:#FFFFFF; --accent-soft:#E3E7F8;
+  --crit:#B3261E; --crit-soft:#FBE4E2; --warn:#8F5600; --warn-soft:#FBEBCF; --ok:#17754A; --ok-soft:#DCF1E5;
+  --info:#0B6475; --info-soft:#D8EEF2; --idle:#8B9794; --idle-soft:#E4E9E7;
+  --hero:#14246B; --hero-ink:#FFFFFF; --hero-mute:#B9C3F2;
+  --f-display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif; --f-body:'IBM Plex Sans','Segoe UI',system-ui,sans-serif; --f-mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0D1412; --surface:#16201D; --surface2:#1C2825; --ink:#E7EFEC; --muted:#9AA9A5; --line:#2A3834;
+  --accent:#A9B6FF; --accent-ink:#0D1412; --accent-soft:#232C57;
+  --crit:#FF8A80; --crit-soft:#3D1F1D; --warn:#F2B35A; --warn-soft:#3A2B10; --ok:#6FD3A0; --ok-soft:#14352A;
+  --info:#6FD0E0; --info-soft:#12333A; --idle:#7E8D89; --idle-soft:#24302C;
+  --hero:#1B2760; --hero-ink:#FFFFFF; --hero-mute:#B9C3F2; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0D1412; --surface:#16201D; --surface2:#1C2825; --ink:#E7EFEC; --muted:#9AA9A5; --line:#2A3834;
+  --accent:#A9B6FF; --accent-ink:#0D1412; --accent-soft:#232C57;
+  --crit:#FF8A80; --crit-soft:#3D1F1D; --warn:#F2B35A; --warn-soft:#3A2B10; --ok:#6FD3A0; --ok-soft:#14352A;
+  --info:#6FD0E0; --info-soft:#12333A; --idle:#7E8D89; --idle-soft:#24302C;
+  --hero:#1B2760; --hero-ink:#FFFFFF; --hero-mute:#B9C3F2; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:400 15px/1.45 var(--f-body);padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px));padding-block:0 48px}
+.wrap{max-width:980px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;letter-spacing:-.01em}
+h2{font-size:1.2rem}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.muted{color:var(--muted)}
+.note{font-size:.82rem;color:var(--muted)}
+
+header{padding-block:18px 0;display:flex;gap:12px;justify-content:space-between;align-items:flex-start}
+header h1{font-size:1.55rem}
+.sub{color:var(--muted);font-size:.85rem;margin-top:2px}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:7px 12px;font-size:.84rem;font-weight:500}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+
+/* HERO */
+.hero{background:var(--hero);color:var(--hero-ink);border-radius:16px;padding:20px;display:grid;gap:18px;grid-template-columns:1fr}
+@media(min-width:760px){.hero{grid-template-columns:auto 1fr;gap:32px;align-items:center;padding:24px 28px}}
+.days b{font-family:var(--f-display);font-weight:800;font-size:4.6rem;line-height:.9;display:block}
+.days span{color:var(--hero-mute);font-size:.9rem}
+.tiles{display:grid;grid-template-columns:repeat(9,1fr);gap:6px}
+.tile{aspect-ratio:1;border:0;border-radius:8px;font-family:var(--f-mono);font-size:.8rem;font-weight:500;color:#fff;display:grid;place-items:center;min-width:0}
+.t-sin{background:#7E8D89} .t-marcha{background:#0B7C91} .t-traba{background:#C9342B} .t-listo{background:#1E8A58}
+.hero h2{font-size:1.15rem;margin-bottom:10px}
+.leg{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.82rem;color:var(--hero-mute);margin-top:10px}
+.leg b{color:#fff}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}
+.hero .fine{font-size:.76rem;color:var(--hero-mute);margin-top:8px}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;min-width:0}
+.panel>h2{margin-bottom:4px}
+.panel>.note{margin-bottom:12px}
+
+/* DECISIONES */
+.decs{display:grid;gap:10px;grid-template-columns:1fr}
+@media(min-width:760px){.decs{grid-template-columns:1fr 1fr}}
+.dec{background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.dec.done{background:var(--ok-soft);border-color:transparent}
+.dec h3{font-size:1rem;display:flex;gap:8px;align-items:baseline}
+.dec h3 i{font-style:normal;font-family:var(--f-mono);font-size:.78rem;color:var(--accent)}
+.dec p{margin:0;font-size:.88rem}
+.prop{background:var(--accent-soft);border-radius:8px;padding:7px 10px;font-size:.84rem}
+.prop b{color:var(--accent);font-weight:600}
+.chk{display:flex;gap:8px;align-items:center;font-size:.84rem;color:var(--muted)}
+.chk input[type=checkbox]{width:20px;height:20px;accent-color:var(--ok);flex:none}
+.line-in{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:7px 10px;width:100%;min-width:0;font-size:.86rem}
+
+/* HABILITACION */
+.hab{display:grid;gap:10px;grid-template-columns:1fr 1fr}
+@media(min-width:760px){.hab{grid-template-columns:repeat(4,1fr)}}
+.hab div{background:var(--surface2);border-radius:12px;padding:12px;font-size:.84rem;min-width:0}
+.hab b{display:block;font-family:var(--f-mono);font-size:.74rem;color:var(--accent);margin-bottom:4px}
+
+/* RUTA */
+.ruta{display:grid;gap:0;grid-template-columns:1fr;position:relative}
+@media(min-width:760px){.ruta{grid-template-columns:repeat(6,1fr)}}
+.hito{position:relative;padding:0 0 14px 22px;font-size:.84rem;min-width:0}
+.hito::before{content:"";position:absolute;left:4px;top:5px;width:11px;height:11px;border-radius:50%;background:var(--idle);border:2px solid var(--surface)}
+.hito::after{content:"";position:absolute;left:9px;top:18px;bottom:-4px;width:2px;background:var(--line)}
+.hito:last-child::after{display:none}
+.hito.now::before{background:var(--accent)} .hito.go::before{background:var(--crit);width:15px;height:15px;left:2px;top:3px}
+.hito b{display:block;font-weight:600} .hito span{color:var(--muted)}
+@media(min-width:760px){
+  .hito{padding:22px 10px 0 0}
+  .hito::before{left:0;top:0}
+  .hito.go::before{left:-2px;top:-2px}
+  .hito::after{left:12px;top:5px;right:-2px;bottom:auto;width:auto;height:2px}
+}
+.reading{margin-top:12px;font-size:.84rem;background:var(--warn-soft);color:var(--warn);border-radius:8px;padding:8px 10px}
+.reading b{font-weight:600}
+
+/* FRENTES */
+.frs{display:flex;flex-direction:column;gap:10px}
+details.fr{background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--idle);border-radius:12px;min-width:0}
+details.fr.s-marcha{border-left-color:var(--info)} details.fr.s-traba{border-left-color:var(--crit)} details.fr.s-listo{border-left-color:var(--ok)}
+details.fr>summary{list-style:none;cursor:pointer;padding:12px 14px;display:grid;gap:8px}
+details.fr>summary::-webkit-details-marker{display:none}
+.fr-top{display:flex;gap:6px 10px;align-items:center;flex-wrap:wrap}
+.fr-top h3{font-size:1.05rem;flex:1 1 220px;min-width:0}
+.chip{display:inline-flex;align-items:center;border-radius:6px;padding:2px 8px;font-size:.74rem;font-weight:600;white-space:nowrap}
+.c-sin{background:var(--idle-soft);color:var(--muted)} .c-marcha{background:var(--info-soft);color:var(--info)} .c-traba{background:var(--crit-soft);color:var(--crit)} .c-listo{background:var(--ok-soft);color:var(--ok)}
+.m-dep{background:var(--accent-soft);color:var(--accent)} .m-dir{background:var(--warn-soft);color:var(--warn)} .m-inf{background:var(--info-soft);color:var(--info)} .m-ins{background:var(--warn-soft);color:var(--warn)} .m-var{background:var(--warn-soft);color:var(--warn)} .m-otr{background:var(--idle-soft);color:var(--muted)}
+.fr-q{font-size:.86rem;color:var(--muted)}
+.pipe{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.pipe i{height:10px;border-radius:5px;background:var(--idle-soft);display:block}
+.p-marcha i.on{background:var(--info)} .p-traba i.on{background:var(--crit)} .p-listo i.on{background:var(--ok)} .p-sin i.on{background:var(--idle)}
+.pipe i.stuck{background:transparent;box-shadow:inset 0 0 0 2px var(--crit)}
+.pl{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;font-size:.66rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.pl span.cur{color:var(--ink);font-weight:600}
+.paso{font-size:.84rem;display:flex;gap:6px}
+.paso b{color:var(--accent);font-weight:600;white-space:nowrap}
+.fr-body{padding:0 14px 14px;display:flex;flex-direction:column;gap:14px;border-top:1px solid var(--line);padding-top:12px}
+.subs{display:flex;flex-wrap:wrap;gap:6px}
+.subs span{font-size:.78rem;border-radius:999px;padding:3px 10px;border:1px solid var(--line);background:var(--surface2)}
+.subs .ok{border-color:var(--ok);color:var(--ok)} .subs .info{border-color:var(--info);color:var(--info)} .subs .warn{border-color:var(--warn);color:var(--warn)}
+.cols{display:grid;gap:12px;grid-template-columns:1fr}
+@media(min-width:760px){.cols{grid-template-columns:repeat(3,1fr)}}
+.col h4{margin:0 0 6px;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;display:flex;gap:6px;align-items:center}
+.col.h h4{color:var(--ok)} .col.f h4{color:var(--crit)} .col.n h4{color:var(--warn)}
+.col ul{margin:0;padding-left:16px;display:flex;flex-direction:column;gap:4px;font-size:.84rem}
+.ctl{background:var(--surface2);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:10px}
+.ctl label{font-size:.78rem;color:var(--muted);display:flex;flex-direction:column;gap:4px}
+.steps{display:flex;flex-wrap:wrap;gap:6px}
+.steps button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 12px;font-size:.82rem}
+.steps button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.steps button:disabled{opacity:.45;cursor:not-allowed}
+.row2{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.row2>*{flex:1 1 180px;min-width:0}
+.tgl{display:flex;gap:8px;align-items:center;font-size:.88rem;color:var(--ink)!important;flex-direction:row!important}
+.tgl input{width:20px;height:20px;accent-color:var(--crit)}
+
+details.fr.pri{border-left-width:7px}
+.pri .fr-top h3{font-size:1.2rem}
+.tile.pri{box-shadow:0 0 0 2px #fff}
+.sech{font-family:var(--f-display);font-size:.78rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);margin:16px 0 8px}
+.sech:first-of-type{margin-top:0}
+.orden{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px}
+.orden>li{display:flex;gap:12px;align-items:flex-start}
+.orden .num{flex:none;width:30px;height:30px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-family:var(--f-mono);font-size:.85rem}
+.orden li.later .num{background:var(--idle)}
+.orden .gr{flex:1;min-width:0}
+.orden b{display:block}
+.orden p{margin:2px 0 0;font-size:.88rem;color:var(--muted)}
+.esp{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.eb{display:inline-flex;border:1px solid var(--line);border-radius:999px;background:var(--surface);overflow:hidden}
+.eb button{border:0;background:none;padding:6px 10px;font-size:.84rem}
+.eb .x{padding:6px 10px;color:var(--muted);border-left:1px solid var(--line)}
+.eb.e0 b{color:var(--muted)} .eb.e1{border-color:var(--info)} .eb.e1 b{color:var(--info)} .eb.e2{border-color:var(--ok);background:var(--ok-soft)} .eb.e2 b{color:var(--ok)}
+.addesp{display:flex;gap:8px;flex-wrap:wrap}
+.addesp input{flex:1 1 200px}
+/* PEDIDOS */
+.grp{display:flex;gap:8px;align-items:center;margin:14px 0 2px;font-size:.84rem}
+.grp:first-of-type{margin-top:0}
+.ped{display:flex;gap:12px;align-items:flex-start;padding:9px 0;border-top:1px solid var(--line);cursor:pointer}
+.ped input{width:22px;height:22px;flex:none;accent-color:var(--ok);margin-top:1px}
+.ped.done span{color:var(--muted);text-decoration:line-through}
+.add{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.add input[type=text]{flex:1 1 220px}
+.add select{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:7px 10px}
+details.arm>summary{cursor:pointer;font-weight:600;font-family:var(--f-display);font-size:1.05rem}
+details.arm ul{margin:10px 0 0;padding-left:18px;display:flex;flex-direction:column;gap:5px;font-size:.88rem}
+.foot{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.src{font-size:.78rem;color:var(--muted)}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:8px;font-size:.84rem;z-index:30}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>RCA Experto</h1>
+      <div class="sub">Migración del Registro Clínico Ambulatorio · Hospital Puerto Montt · documentación al 14-10-2026</div>
+    </div>
+    <button class="btn" id="themeBtn" type="button">Tema</button>
+  </header>
+
+  <section class="hero" aria-label="Resumen">
+    <div class="days"><b id="dias">–</b><span>días para la puesta en marcha<br>(2 ene; opera lunes 4 de enero de 2027)</span></div>
+    <div>
+      <h2 id="heroTitle">–</h2>
+      <div class="tiles" id="tiles"></div>
+      <div class="leg" id="leg"></div>
+      <div class="fine">Anillo blanco: línea priorizada. No existe una medición formal de avance global del RCA, por eso el tablero no calcula un porcentaje.</div>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="hPri">
+    <h2 id="hPri">Líneas priorizadas</h2>
+    <div class="note">Lo que debe estar sí o sí para el inicio. Toca una línea para ver qué hay, qué falta y qué no está acreditado.</div>
+    <div class="frs" id="frsPri"></div>
+  </section>
+
+  <section class="panel" aria-labelledby="hE">
+    <h2 id="hE">Orden de despliegue</h2>
+    <div class="note">Primero lo genérico; después cada especialidad, una por una.</div>
+    <ol class="orden">
+      <li><span class="num">1</span><div class="gr"><b>Solicitudes genéricas</b><p>Consulta médica con REM A07, consulta abreviada, gestión de caso, farmacia y recetas.</p></div></li>
+      <li><span class="num">2</span><div class="gr"><b>Especialidades que ya hacen teleconsulta con RCA</b><p>Se revisan sus pendientes y recién ahí se desarrollan. Toca una para cambiar su estado. <span id="espCount"></span>.</p>
+        <div class="esp" id="esp"></div>
+        <form class="addesp" id="espForm"><input class="line-in" type="text" id="espTxt" placeholder="Agregar una especialidad" autocomplete="off"><button class="btn" type="submit">Agregar</button></form>
+        <p>Lista según el equipo; confirmar contra las agendas reales.</p></div></li>
+      <li class="later"><span class="num">3</span><div class="gr"><b>Después</b><p>Consulta de no médicos (dental, kinesiología y otros) e interfaz de procedimientos.</p></div></li>
+    </ol>
+  </section>
+
+  <section class="panel" aria-labelledby="hD">
+    <h2 id="hD">Decisiones por tomar</h2>
+    <div class="note">Definiciones que requieren acuerdo de la dirección y de la mesa de trabajo.</div>
+    <div class="decs" id="decs"></div>
+  </section>
+
+  <section class="panel" aria-labelledby="hF">
+    <h2 id="hF">Frentes habilitantes</h2>
+    <div class="note">Lo que hace posible las líneas priorizadas: respaldo, catálogo, agendas, interconsultas, contingencia y capacitación.</div>
+    <div class="frs" id="frsHab"></div>
+  </section>
+
+  <section class="panel" aria-labelledby="hP">
+    <h2 id="hP">Pedidos de esta semana</h2>
+    <div class="note">Marca lo hecho. Anota lo nuevo en una línea.</div>
+    <div id="peds"></div>
+    <form class="add" id="addForm">
+      <input class="line-in" type="text" id="addTxt" placeholder="Anotar un pedido o novedad" autocomplete="off">
+      <select id="addWho" aria-label="Quién lo mueve"></select>
+      <button class="btn primary" type="submit">Agregar</button>
+    </form>
+  </section>
+
+  <section class="panel" aria-labelledby="hR">
+    <h2 id="hR">Ruta</h2>
+    <div class="note">Hitos según la propuesta de constitución (9-oct).</div>
+    <div class="ruta" id="ruta"></div>
+  </section>
+
+  <section class="panel" aria-labelledby="hH">
+    <h2 id="hH">Condiciones para habilitar una especialidad</h2>
+    <div class="note">Una especialidad inicia solo si cumple las cuatro. Toda brecha que impida iniciar necesita resolución o alternativa validada.</div>
+    <div class="hab">
+      <div><b>1 · CATÁLOGO</b>Catálogo clínico y documentos indispensables cargados y validados por el referente.</div>
+      <div><b>2 · FLUJO</b>Probado desde SIC y agenda hasta registro, receta, control/alta y contrarreferencia, con LEC y producción.</div>
+      <div><b>3 · PERSONAS</b>Usuarios y permisos definidos; profesionales y citadores capacitados; manual actualizado.</div>
+      <div><b>4 · RESPALDO</b>Reporte conciliado, contingencia autorizada y soporte identificado.</div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <details class="arm">
+      <summary>Ajustes a pedir a la propuesta de constitución</summary>
+      <ul>
+        <li><b>Alcance:</b> el objetivo dice «atención cerrada» y los entregables incluyen hospitalizado; precisar atención ambulatoria presencial y remota.</li>
+        <li><b>Diagnóstico:</b> partir de las funciones entregadas, capacitaciones, actas LEC y pendientes 2026; el levantamiento 2024 no sustituye una verificación vigente.</li>
+        <li><b>Enero:</b> explicitar qué se entrega el 2 de enero y qué continúa después, y su compatibilidad con el mandato.</li>
+        <li><b>Recursos:</b> convertir la reserva de horas en horas confirmadas (por persona o por equipo; TIC hospitalario separado del proveedor).</li>
+        <li><b>Indicadores:</b> 95 % de cierre de brechas, 100 % de cumplimiento y 90 % menos papel necesitan línea base, denominador, método y plazo.</li>
+        <li><b>Tolerancia del 10 %:</b> aclarar qué fechas y recursos varían y si toca el hito de enero.</li>
+        <li><b>Selección de equipos:</b> por preparación comprobada y no solo por categoría clínica (la etapa I propone especialidades quirúrgicas).</li>
+        <li><b>Gantt:</b> completar con actividades semanales; distinguir cierre en abril de soporte hasta junio.</li>
+      </ul>
+    </details>
+  </section>
+
+  <div class="foot">
+    <button class="btn" id="copyBtn" type="button">Copiar respaldo</button>
+    <button class="btn" id="resetBtn" type="button">Restablecer</button>
+    <span class="src" id="resetNote"></span>
+  </div>
+  <p class="src">Fuentes: revisión consolidada por el líder del equipo (14-oct), actas LEC del 7 y 14-oct, acta RCA del equipo (9-oct), propuesta de constitución (9-oct), correos y transcripción de la reunión del 14-oct. Lo informado por Informática figura como informado, no como verificado. Los cambios se guardan solo en este dispositivo.</p>
+</div>
+<div id="toast" hidden></div>
+
+<script>
+const MUEVE={dep:'Nosotros',dir:'Dirección',inf:'Informática',ins:'Jurídica y Seguridad',var:'Varios',otr:'Otros'};
+const ETAPAS=['Sin partir','Pedido','En curso','En prueba','Validado'];
+const DECS=[
+ {id:'D1',t:'¿Qué significa el 2 de enero?',p:'Hospital completo, o primera etapa de consulta médica y abreviada en las especialidades habilitadas. Y cómo calza con el despliegue ene–mar y el cierre en abril.',r:'Primera etapa: consulta médica con REM A07, abreviada, gestión de caso y receta, en las especialidades habilitadas. No médicos y procedimientos, en una etapa posterior con fecha.'},
+ {id:'D2',t:'¿Quién dirige y con qué horas?',p:'Confirmar dirección, contraparte funcional, atribuciones de decisión y horas realmente reservadas para desarrollo, capacitación y soporte.',r:'Un responsable con suplencia y horas por persona, por escrito. Separar horas TIC del hospital y del proveedor.'},
+ {id:'D3',t:'Lista única de brechas y Gantt',p:'Inventario único con estado, responsable, dependencia, fecha y criterio de aceptación por especialidad, incluidos los pendientes LEC y la línea de Atención en Red.',r:'Fijar fecha de entrega y revisión periódica. Partir de este tablero y las actas.'},
+ {id:'D4',t:'¿Quién autoriza pasar a producción?',p:'Qué pruebas se exigen y quién confirma la regularización de errores históricos y de la producción.',r:'Autorización escrita por especialidad, con las cuatro condiciones de habilitación cumplidas.'}
+];
+const FR0=[
+ {id:'med',t:'Consulta médica ambulatoria y REM',q:'Registro médico presencial y por teleconsulta, tributando al REM A07',mueve:'inf',etapa:2,traba:false,
+  subs:[['Consulta médica','En uso parcial','ok'],['REM A07','Por desarrollar','warn'],['Antecedentes del paciente','Por verificar','warn']],
+  h:['Registro ambulatorio presencial y teleconsulta informados como entregados (29-sep)','Dermatología con uso presencial parcial; teleconsulta de varias especialidades ya usa RCA','Integración con el histórico de hospitalización y urgencia informada'],
+  f:['Desarrollar el REM A07 (consulta médica) y validar con Estadística que los registros tributen','Reporte conciliado con registros de prueba','Verificar que el profesional vea los antecedentes históricos al atender','Requisitos indispensables por especialidad: separar lo que impide iniciar de las mejoras posteriores'],
+  n:['La completitud de la pantalla médica es una apreciación del desarrollador, no una medición ni una aceptación de usuarios','Una pantalla entregada no acredita cobertura de todas las modalidades','Broncopulmonar Adulto, Cirugía Infantil y Paliativos condicionaban su inicio (al 29-sep)','No hay verificación de que los registros tributen al REM']},
+ {id:'abrev',t:'Consulta abreviada y gestión de caso',q:'Atenciones sin consulta médica completa y seguimiento de casos',mueve:'dep',etapa:2,traba:false,
+  subs:[['Consulta abreviada','Revisar flujo','warn'],['Gestión de caso','En desarrollo','info']],
+  h:['Pantallas desarrolladas según Informática; falta revisar flujo y diseño','Los controles de consulta abreviada hoy se generan desde «Próximo control» en Poli Digital'],
+  f:['Revisar flujo y diseño con los referentes funcionales','Formalizar reglas: opciones de receta, exámenes, SIC, control y alta','Acordar la regla clínica de los controles generados y cómo gestionar seguimientos reales (base y cantidad por solicitar)','Restringir o no control y alta en otros ambulatorios: sin acuerdo definitivo'],
+  n:['No consta validación ni puesta en producción','Los correos de abril muestran diferencias de criterio sin resolver']},
+ {id:'receta',t:'Receta y farmacia',q:'Reglas de uso de la receta ambulatoria y asociados',mueve:'dep',etapa:1,traba:true,
+  h:['Integración de receta con Poli Digital informada (29-sep)'],
+  f:['Reglas y actualización de farmacia ambulatoria: solicitadas desde abril y reiteradas en septiembre','Precisar qué entra en «asociados» a la receta'],
+  n:['Estado final del requerimiento de farmacia no acreditado','Completitud de la integración sin verificar']},
+ {id:'dir',t:'Respaldo de la dirección',q:'Alcance del 2 de enero, responsables y horas reservadas',mueve:'dir',etapa:0,traba:true,
+  h:['Propuesta de constitución del 9-oct con estructura de proyecto, riesgos y Gantt preliminar','Acta del equipo del 9-oct propone consulta médica y abreviada como primera etapa'],
+  f:['Aprobar el alcance del 2 de enero','Confirmar dirección, contraparte y atribuciones','Horas reservadas TIC y proveedor (propuesta: 8 h de coordinación, 10 clínicas, 10 informáticas)','Lista única de brechas y Gantt detallado'],
+  n:['Sponsor y director propuestos: sin aceptación acreditada','No hay recursos asignados a priori']},
+ {id:'cat',t:'Catálogo de exámenes y procedimientos',q:'Qué se puede pedir y ejecutar en Experto, por especialidad',mueve:'dep',etapa:0,traba:false,
+  h:['Informática puede cargar códigos y asociarlos a especialidades cuando recibe el listado validado'],
+  f:['Levantamiento clínico por especialidad: nombre, código, profesión, solicitud, ejecución, pantalla y reporte','Priorizar procedimientos de enfermería','Recuperar el listado nominal de exámenes faltantes de Teleprocesos','Recuperar el histórico de solicitudes de procedimientos'],
+  n:['Ausencia de carga de enfermería: antecedente aportado por el equipo, sin inventario que lo confirme','Disponibilidad real en Experto frente a Poli Digital sin comprobar','Un examen de Ginecología quedó ilegible en la transcripción']},
+ {id:'lec',t:'Lista de espera y agendas',q:'Controles, citación, cupos y duplicidades',mueve:'inf',etapa:2,traba:false,
+  h:['Migración de controles, citación, postergación, egreso por permisos e historial informados','Citaciones duplicadas y triplicadas corregidas desde el 14-oct (acta)','Incidente de cupos sin nombre corregido; casos entregados al CAE','Ventanillas instruidas sobre búsqueda de pacientes suspendidos'],
+  f:['Duplicidades históricas anteriores al 14-oct: entregar el listado para revisión y eliminación','Control administrativo: espera indicación de jefatura (cupo asociado a LEC o IC administrativa, citadores capacitados, manual corregido)','Carga masiva de fallecidos y depuración de duplicados: probar antes de producción','Reportería clínica LEC: revisar campos, diferencias e incongruencias','Dos perfiles de cupo y corrección de cruces entre profesionales','Rechazo definitivo y validador de RUT: en revisión por CAE'],
+  n:['Botón de reagendamiento: no se acredita su restitución','Permisos de egreso por fallecimiento: 80 contralores y 33 de LEC no se suman como usuarios únicos','Conciliación de la producción histórica pendiente','Caso Antofagasta (sobrecupo): solución no acreditada']},
+ {id:'ic',t:'Interconsultas, contrarreferencia y Atención en Red',q:'Solicitudes, derivación y circuitos con otros establecimientos',mueve:'var',etapa:1,traba:true,
+  h:['Interconsultas y SIC/control post alta desde epicrisis informados como entregados (29-sep)','Requerimiento y listado de convenios de Macrored enviados por el referente'],
+  f:['SIC de Anestesiología sin ID local: cuantificar y conciliar afectados','Excel de contrarreferencias y vista de las históricas de Poli Digital (solicitadas el 23 y 25-sep)','SIC APS ausentes: definir contraparte y canal de seguimiento','Atención en Red: circuitos externos, pantallas, filtros y campos con sus referentes','Anatomía Patológica: circuito solicitud, muestra y resultado con sus referentes','Controles generados desde «Próximo control»: base, cantidad y regla clínica'],
+  n:['Filtro de Macrored: no consta que funcione','No se acredita corrección de las SIC de Anestesiología','Sin evidencia de cierre del circuito de Anatomía Patológica']},
+ {id:'cont',t:'Contingencia y protección de datos',q:'Qué pasa si falla el sistema y qué sigue en Poli Digital',mueve:'ins',etapa:0,traba:false,
+  h:['El SSDR derivó los controles al encargado de seguridad del HPM y la interpretación jurídica a la Unidad Jurídica'],
+  f:['Canal de contingencia, permisos, responsables y recuperación del registro','Prestaciones que siguen en Poli Digital: dónde registrar, cómo ver antecedentes, cómo evitar dobles registros','Soporte para casos urgentes y criterios para retomar el circuito normal','Validación integral de Teleprocesos con Seis Media: SIC, agenda, videollamada, receta, certificados'],
+  n:['Las opciones Microsoft 365 eran sugerencias, no medidas aprobadas','No hay acta que confirme la validación Experto–Seis Media']},
+ {id:'cap',t:'Capacitación y primeros equipos',q:'Quién se capacita, cuándo y con qué manual',mueve:'dep',etapa:2,traba:false,
+  h:['Capacitaciones a equipos en curso'],
+  f:['Capacitación de ámbito general: cápsulas grabadas para los médicos (propuesta)','Plan por equipo: usuarios, permisos y manual actualizado','Formación de citadores, validación de reportes y acompañamiento en terreno','Elegir equipos por preparación comprobada, no por categoría quirúrgica','Confirmar disponibilidad de quienes capacitan'],
+  n:['Quién dicta la capacitación de proceso durante el período de subrogancias: por confirmar']}
+];
+const PED0=[
+ {id:'p1',w:'dep',t:'Ingresar el requerimiento de reglas de uso de la receta ambulatoria'},
+ {id:'p2',w:'dep',t:'Relevar los pendientes de cada especialidad con teleconsulta, en el orden definido'},
+ {id:'p11',w:'dep',t:'Definir con Estadística el requerimiento del REM A07'},
+ {id:'p12',w:'dep',t:'Revisar el flujo y diseño de consulta abreviada y gestión de caso'},
+ {id:'p3',w:'dep',t:'Levantar el catálogo clínico validado por especialidad, empezando por enfermería'},
+ {id:'p4',w:'dir',t:'Aprobar el alcance del 2 de enero y la lista de especialidades de primera etapa'},
+ {id:'p5',w:'dir',t:'Confirmar dirección, contraparte, priorización y horas de TIC y proveedor'},
+ {id:'p6',w:'dir',t:'Encargar el inventario único de brechas y el Gantt detallado'},
+ {id:'p7',w:'dir',t:'Definir quién autoriza el paso a producción'},
+ {id:'p8',w:'inf',t:'Corregir el cruce de agendas entre profesionales'},
+ {id:'p9',w:'inf',t:'Corregir las SIC de Anestesiología sin ID local y cuantificar afectados'},
+ {id:'p10',w:'ins',t:'Definir el canal de contingencia y el tratamiento de datos'}
+];
+const RUTA=[
+ {c:'now',b:'Hoy',s:'Estado actual'},
+ {c:'',b:'Nov–dic',s:'Implementación I (propuesta: quirúrgicas)'},
+ {c:'go',b:'2–4 ene 2027',s:'Puesta en marcha'},
+ {c:'',b:'Ene–mar',s:'Implementación II'},
+ {c:'',b:'Abril',s:'Cierre y evaluación'},
+ {c:'',b:'Junio',s:'Soporte y mantención'}
+];
+
+const ESP0=[{id:'e1',n:'Dermatología',st:1},{id:'e2',n:'Neurología',st:0},{id:'e3',n:'Neurocirugía',st:0},{id:'e4',n:'Diabetología',st:0},{id:'e5',n:'Nutriología',st:0},{id:'e6',n:'Ginecología',st:0},{id:'e7',n:'Reumatología',st:0}];
+const ESTL=['Por revisar','En desarrollo','Lista para iniciar'];
+const KEY='rca-tablero-v5';
+const clone=o=>JSON.parse(JSON.stringify(o));
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const $=id=>document.getElementById(id);
+const Store={
+  load(){try{const r=localStorage.getItem(KEY);return r?JSON.parse(r):null}catch(e){return null}},
+  save(s){try{localStorage.setItem(KEY,JSON.stringify(s))}catch(e){}}
+};
+function fresh(){const fr={};FR0.forEach(f=>fr[f.id]={etapa:f.etapa,traba:f.traba,mueve:f.mueve,paso:'',evid:''});return{fr,dec:{},esp:clone(ESP0),ped:{done:{},extra:[]}}}
+let S=Store.load()||fresh();
+FR0.forEach(f=>{if(!S.fr[f.id])S.fr[f.id]={etapa:f.etapa,traba:f.traba,mueve:f.mueve,paso:'',evid:''}});
+S.esp=S.esp||clone(ESP0);S.dec=S.dec||{};S.ped=S.ped||{done:{},extra:[]};
+const persist=()=>Store.save(S);
+
+function est(f){const s=S.fr[f.id];if(s.etapa===4&&!s.traba)return'listo';if(s.traba)return'traba';if(s.etapa===0)return'sin';return'marcha'}
+const EL={sin:'Sin avance',marcha:'En marcha',traba:'Con traba',listo:'Listo'};
+
+function renderHero(){
+  const d0=new Date();d0.setHours(0,0,0,0);
+  const dias=Math.max(0,Math.ceil((new Date(2027,0,4)-d0)/864e5));
+  $('dias').textContent=dias;
+  const cnt={sin:0,marcha:0,traba:0,listo:0};
+  FR0.forEach(f=>cnt[est(f)]++);
+  $('heroTitle').textContent=FR0.slice(0,3).filter(f=>est(f)==='listo').length+' de 3 líneas priorizadas validadas';
+  $('tiles').innerHTML=FR0.map((f,i)=>'<button class="tile t-'+est(f)+(i<3?' pri':'')+'" type="button" data-go="'+f.id+'" title="'+esc(f.t)+': '+EL[est(f)]+'" aria-label="'+esc(f.t)+': '+EL[est(f)]+'">'+(i+1)+'</button>').join('');
+  const col={listo:'#1E8A58',marcha:'#0B7C91',traba:'#C9342B',sin:'#7E8D89'};
+  $('leg').innerHTML=['listo','marcha','traba','sin'].map(k=>'<span><i class="dot" style="background:'+col[k]+'"></i><b>'+cnt[k]+'</b> '+EL[k].toLowerCase()+'</span>').join('');
+}
+function renderDecs(){
+  $('decs').innerHTML=DECS.map((d,i)=>{
+    const done=!!(S.dec[d.id]&&S.dec[d.id].ok),ac=(S.dec[d.id]&&S.dec[d.id].txt)||'';
+    return '<div class="dec'+(done?' done':'')+'"><h3><i>'+(i+1)+'</i>'+esc(d.t)+'</h3><p>'+esc(d.p)+'</p><div class="prop"><b>Propuesta:</b> '+esc(d.r)+'</div>'
+     +'<label class="chk"><input type="checkbox" data-dec="'+d.id+'"'+(done?' checked':'')+'> Decidido</label>'
+     +(done?'<input class="line-in" type="text" data-dectxt="'+d.id+'" placeholder="Qué se acordó y fecha" value="'+esc(ac)+'">':'')+'</div>';
+  }).join('');
+}
+function pipe(f){
+  const s=S.fr[f.id],k=est(f);let h='<div class="pipe p-'+k+'">';
+  for(let i=1;i<=4;i++)h+='<i class="'+(i<=s.etapa?'on':(s.traba&&i===s.etapa+1?'stuck':''))+'"></i>';
+  h+='</div><div class="pl">';
+  for(let i=1;i<=4;i++)h+='<span class="'+(i===s.etapa?'cur':'')+'">'+ETAPAS[i]+'</span>';
+  return h+'</div>';
+}
+function li(a){return a.map(x=>'<li>'+esc(x)+'</li>').join('')}
+function renderFrs(){
+  const open=new Set([...document.querySelectorAll('details.fr[open]')].map(e=>e.dataset.id));
+  const cards=FR0.map((f,i)=>{
+    const s=S.fr[f.id],k=est(f);
+    const subs=f.subs?'<div class="subs">'+f.subs.map(x=>'<span class="'+x[2]+'"><b>'+esc(x[0])+'</b> · '+esc(x[1])+'</span>').join('')+'</div>':'';
+    const okEv=(s.evid||'').trim().length>0;
+    const steps=ETAPAS.map((e,j)=>'<button type="button" data-et="'+f.id+':'+j+'" aria-pressed="'+(s.etapa===j)+'"'+(j===4&&!okEv?' disabled':'')+'>'+e+'</button>').join('');
+    return '<details class="fr'+(i<3?' pri':'')+' s-'+k+'" data-id="'+f.id+'" id="fr-'+f.id+'"'+(open.has(f.id)?' open':'')+'><summary>'
+     +'<div class="fr-top"><h3>'+(i+1)+'. '+esc(f.t)+'</h3><span class="chip m-'+s.mueve+'">Mueve: '+MUEVE[s.mueve]+'</span><span class="chip c-'+k+'">'+EL[k]+'</span></div>'
+     +'<div class="fr-q">'+esc(f.q)+'</div>'+pipe(f)
+     +(s.paso?'<div class="paso"><b>Próximo paso:</b> <span>'+esc(s.paso)+'</span></div>':'')+'</summary>'
+     +'<div class="fr-body">'+subs
+     +'<div class="cols"><div class="col h"><h4>Hay</h4><ul>'+li(f.h)+'</ul></div><div class="col f"><h4>Falta</h4><ul>'+li(f.f)+'</ul></div><div class="col n"><h4>Sin acreditar</h4><ul>'+li(f.n)+'</ul></div></div>'
+     +'<div class="ctl"><label>Etapa<div class="steps">'+steps+'</div></label>'
+     +(okEv?'':'<div class="note">«Validado» requiere evidencia escrita (acta, correo o fecha). Anótala abajo para habilitarlo.</div>')
+     +'<div class="row2"><label>Evidencia de validación<input class="line-in" type="text" data-evid="'+f.id+'" value="'+esc(s.evid||'')+'" placeholder="Ej.: acta 21-oct"></label>'
+     +'<label>Quién lo mueve<select class="line-in" data-mv="'+f.id+'">'+Object.keys(MUEVE).map(m=>'<option value="'+m+'"'+(s.mueve===m?' selected':'')+'>'+MUEVE[m]+'</option>').join('')+'</select></label></div>'
+     +'<label>Próximo paso<input class="line-in" type="text" data-paso="'+f.id+'" value="'+esc(s.paso||'')+'" placeholder="Una línea"></label>'
+     +'<label class="tgl"><input type="checkbox" data-tr="'+f.id+'"'+(s.traba?' checked':'')+'> Con traba (detenido)</label></div>'
+     +'</div></details>';
+  });
+  $('frsPri').innerHTML=cards.slice(0,3).join('');
+  $('frsHab').innerHTML=cards.slice(3).join('');
+}
+function renderPeds(){
+  const all=PED0.concat(S.ped.extra),order=['dep','dir','inf','ins','var','otr'];
+  $('peds').innerHTML=order.map(w=>{
+    const l=all.filter(p=>p.w===w);if(!l.length)return'';
+    return '<div class="grp"><span class="chip m-'+w+'">'+MUEVE[w]+'</span><span class="muted">'+l.filter(p=>!S.ped.done[p.id]).length+' pendientes</span></div>'
+     +l.map(p=>'<label class="ped'+(S.ped.done[p.id]?' done':'')+'"><input type="checkbox" data-pd="'+p.id+'"'+(S.ped.done[p.id]?' checked':'')+'><span>'+esc(p.t)+'</span></label>').join('');
+  }).join('');
+}
+function renderRuta(){$('ruta').innerHTML=RUTA.map(r=>'<div class="hito '+r.c+'"><b>'+esc(r.b)+'</b><span>'+esc(r.s)+'</span></div>').join('')}
+function renderEsp(){
+  $('esp').innerHTML=S.esp.map(e=>'<span class="eb e'+e.st+'"><button type="button" data-esp="'+e.id+'" title="Toca para cambiar el estado">'+esc(e.n)+' · <b>'+ESTL[e.st]+'</b></button><button type="button" class="x" data-espdel="'+e.id+'" aria-label="Quitar '+esc(e.n)+'">×</button></span>').join('');
+  $('espCount').textContent=S.esp.filter(e=>e.st===2).length+' de '+S.esp.length+' listas para iniciar';
+}
+function renderAll(){renderHero();renderDecs();renderFrs();renderEsp();renderPeds()}
+
+function toast(m){const t=$('toast');t.textContent=m;t.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(()=>t.hidden=true,2200)}
+document.addEventListener('click',e=>{
+  const g=e.target.closest('[data-go]');
+  if(g){const el=$('fr-'+g.dataset.go);el.open=true;el.scrollIntoView({behavior:'smooth',block:'start'});return}
+  const se=e.target.closest('[data-esp]');
+  if(se){const x=S.esp.find(v=>v.id===se.dataset.esp);x.st=(x.st+1)%3;persist();renderEsp();return}
+  const sd=e.target.closest('[data-espdel]');
+  if(sd){S.esp=S.esp.filter(v=>v.id!==sd.dataset.espdel);persist();renderEsp();return}
+  const b=e.target.closest('[data-et]');
+  if(b){const[id,n]=b.dataset.et.split(':');S.fr[id].etapa=+n;persist();renderAll()}
+});
+document.addEventListener('change',e=>{
+  const t=e.target,d=t.dataset;
+  if(d.dec){S.dec[d.dec]=Object.assign(S.dec[d.dec]||{},{ok:t.checked});persist();renderDecs()}
+  else if(d.dectxt){S.dec[d.dectxt]=Object.assign(S.dec[d.dectxt]||{},{txt:t.value});persist()}
+  else if(d.tr){S.fr[d.tr].traba=t.checked;persist();renderAll()}
+  else if(d.mv){S.fr[d.mv].mueve=t.value;persist();renderAll()}
+  else if(d.paso){S.fr[d.paso].paso=t.value.trim();persist();renderAll()}
+  else if(d.evid){S.fr[d.evid].evid=t.value;if(!t.value.trim()&&S.fr[d.evid].etapa===4)S.fr[d.evid].etapa=3;persist();renderAll()}
+  else if(d.pd){S.ped.done[d.pd]=t.checked;persist();renderPeds()}
+});
+$('addWho').innerHTML=Object.keys(MUEVE).map(m=>'<option value="'+m+'">'+MUEVE[m]+'</option>').join('');
+$('addForm').addEventListener('submit',e=>{
+  e.preventDefault();const v=$('addTxt').value.trim();if(!v)return;
+  S.ped.extra.push({id:'x'+Date.now(),w:$('addWho').value,t:v});$('addTxt').value='';persist();renderPeds();
+});
+$('espForm').addEventListener('submit',e=>{
+  e.preventDefault();const v=$('espTxt').value.trim();if(!v)return;
+  S.esp.push({id:'e'+Date.now(),n:v,st:0});$('espTxt').value='';persist();renderEsp();
+});
+$('copyBtn').addEventListener('click',()=>{
+  const txt=JSON.stringify(S,null,1);
+  const fb=()=>{const a=document.createElement('textarea');a.value=txt;document.body.appendChild(a);a.select();try{document.execCommand('copy');toast('Respaldo copiado')}catch(x){toast('No se pudo copiar')}a.remove()};
+  try{navigator.clipboard.writeText(txt).then(()=>toast('Respaldo copiado'),fb)}catch(x){fb()}
+});
+let rs=false;
+$('resetBtn').addEventListener('click',()=>{
+  if(!rs){rs=true;$('resetNote').textContent='Toca de nuevo para borrar todos los cambios de este dispositivo.';setTimeout(()=>{rs=false;$('resetNote').textContent=''},4000);return}
+  S=fresh();persist();rs=false;$('resetNote').textContent='';renderAll();toast('Tablero restablecido');
+});
+$('themeBtn').addEventListener('click',()=>{
+  const r=document.documentElement,cur=r.getAttribute('data-theme');
+  const dark=cur?cur==='dark':matchMedia('(prefers-color-scheme: dark)').matches;
+  r.setAttribute('data-theme',dark?'light':'dark');
+});
+renderRuta();renderAll();
+</script>
+
+</body>
+</html>
